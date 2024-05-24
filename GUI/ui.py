@@ -5,6 +5,7 @@ from tkinter import filedialog
 from tkinter import simpledialog
 import WordToPDF as wp
 import EncryptPDF as ep
+import PDFtoWord as pw
 import os
 
 class WinGUI(Tk):
@@ -15,6 +16,7 @@ class WinGUI(Tk):
         self.tk_label_lwkd39qq = self.__tk_label_lwkd39qq(self)
         self.tk_button_lwkd69mj = self.__tk_button_lwkd69mj(self)
         self.tk_button_lwkd6hjn = self.__tk_button_lwkd6hjn(self)
+        self.tk_button_lwkd7btn = self.__tk_button_lwkd7btn(self)
     
     def __win(self):
         self.title("PDF Master")
@@ -81,6 +83,11 @@ class WinGUI(Tk):
         btn = Button(parent, text="PDF加密", takefocus=False,)
         btn.place(x=241, y=160, width=137, height=39)
         return btn
+    
+    def __tk_button_lwkd7btn(self,parent):
+        btn = Button(parent, text="PDF转Word", takefocus=False)
+        btn.place(x=240, y=220, width=139, height=39)
+        return btn
 
 class Win(WinGUI):
     def __init__(self, controller=None):
@@ -94,6 +101,7 @@ class Win(WinGUI):
     def __event_bind(self):
         self.tk_button_lwkd69mj.bind('<Button-1>',self.wordPath)
         self.tk_button_lwkd6hjn.bind('<Button-1>',self.pdfPATH)
+        self.tk_button_lwkd7btn.bind('<Button-1>',self.PDFPATH)
     
     def __style_config(self):
         pass
@@ -112,6 +120,21 @@ class Win(WinGUI):
         # 构建pdf文件的文件名
         pdf_filename = word_filename[:last_dot_index] + ".pdf"
         wp.createPDF(word_path, pdf_filename)
+
+    def PDFPATH(self, event):
+        pdf_path = filedialog.askopenfilename(
+            title="选择 PDF 文件",
+            filetypes=[("PDF 文件", "*.pdf"), ("所有文件", "*.*")]
+        )
+
+        pdf_path = pdf_path.replace("\\", "\\\\")
+        pdf_filename = os.path.basename(pdf_path)
+        # 找到pdf文件名中最后一个点的位置
+        last_dot_index = pdf_filename.rfind(".")
+
+        # 构建word文件的文件名
+        word_filename = pdf_filename[:last_dot_index] + ".docx"
+        pw.createWord(pdf_path, word_filename)
     
     def pdfPATH(self, event):
         pdf_path = filedialog.askopenfilename(
